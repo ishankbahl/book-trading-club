@@ -1,6 +1,6 @@
 import { LOG_IN , LOG_OUT } from "./../constants";
 
-function reducer ( state = {} , action )  {
+function reducer ( state , action )  {
     switch (action.type) {
         case LOG_IN:
             return {

@@ -4,25 +4,43 @@ import { createStyleSheet , withStyles } from "material-ui/styles";
 import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 import Button from "material-ui/Button";
+import Home from "material-ui-icons/Home";
 import Typography from "material-ui/Typography";
-import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 import colors from "./../../colors";
+//import { AfterLogin , BeforeLogin } from "./../../components";
+import Auth from "./../../Auth/Auth";
+
+const auth = new Auth();
+const { login , logout } = auth;
+
 
 function mapStateToProps (state) {
     const { logged } = state;
     return {
-        logged
+        logged,
+        login,
+        logout
     };
 }
 
 class Header extends Component{
-    constructor(props){
-        super(props);
-    }
 
     checkUserStatus(){
-        console.log(this.props);
+        const { classes , login , logout } = this.props;
+        console.log(this.props.logged);
+        if(this.props.logged===false)
+            return (
+            <Button onClick={ login } >
+                <Typography type = "caption" className = {classes.settings} >&nbsp;Sign Up/Log In</Typography>
+            </Button>
+            );
+        else 
+            return (
+            <Button onClick = { logout } >
+                <Typography type = "caption" className = {classes.settings} >&nbsp;Log Out</Typography>
+            </Button>);
     }
 
     render(){
@@ -31,11 +49,11 @@ class Header extends Component{
             <div className={classes.root} >
                 <AppBar position="static" className={classes.header} >
                     <Toolbar className={classes.bar} >
-                        <Button>
-                            <Link to = "/home" className={classes.link} >
-                                <Typography type = "caption" className = {classes.settings} >&nbsp;Home</Typography>
-                            </Link>
+                        <Button onClick = { () => this.props.history.push("/home") } >
+                            <Home className={classes.icon} aria-label="home" />
+                            <Typography type = "caption" className = {classes.settings} >&nbsp;Home</Typography>
                         </Button>
+                        <div className={ classes.flex } ></div>
                         {this.checkUserStatus()}
                     </Toolbar>
                 </AppBar>
@@ -48,11 +66,9 @@ const styleSheet=createStyleSheet("Header",{
     root : {
         width:"100%"
     },
-    icon : {
-        height  : 27,
-        width   : 27,
-        color   : colors.white,
-    },
+    flex : {
+        flex :1,
+    } ,
     settings : {
         color          : colors.white,
         fontSize       : 19,
@@ -64,9 +80,10 @@ const styleSheet=createStyleSheet("Header",{
     header : {
         backgroundColor : colors.blue
     },
-    link : {
-        textDecoration : "none",
-        padding        : 0
+    icon : {
+        height: 27,
+        width: 27,
+        color: colors.white,
     }
 });
 
@@ -74,4 +91,4 @@ Header.propTypes={
     classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styleSheet)(Header);
+export default withRouter(connect(mapStateToProps,null)(withStyles(styleSheet)(Header)));
